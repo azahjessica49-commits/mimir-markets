@@ -767,7 +767,7 @@ Both loaders synthesize their own payments, signatures and Horizon reads on an i
 | LLM layer          | Routed language model layer                                                       | `lib/llm.ts` handles model calls, cooldowns, and fallback routing                                                  |
 | Messaging          | XMTP Browser SDK v7 (`@xmtp/browser-sdk`)                                         | Optional E2E-encrypted chat between creator and challenger before/after settlement                               |
 | Database           | Neon Postgres via `@neondatabase/serverless`                                      | Serverless-friendly driver, works on both Vercel functions and Railway long-running workers                      |
-| i18n               | next-intl (English only today)                                                    | Locale-prefixed routing (`/en/*`) with the plumbing in place; add a locale in `i18n/routing.ts` + `messages/`     |
+| i18n               | next-intl (English only today)                                                    | Locale-prefixed routing (`/en/*`) with the plumbing in place; add a locale in `i18n/routing.ts` + `messages/`, then run `npm run check:locales` — see [`docs/LOCALIZATION.md`](docs/LOCALIZATION.md) |
 | Frontend hosting   | Vercel                                                                            | Native Next.js, `iad1` region, 30s function timeout for /api routes                                              |
 | Worker hosting     | Railway                                                                           | Long-lived processes; `npm run workers` runs the oracle + market-creator + council with auto-restart              |
 
@@ -1132,6 +1132,8 @@ Every env var lives in `.env.example`. Quick reference:
 | `npm run build` / `npm start`                | Production build / serve                                                           |
 | `npm run typecheck`                          | `tsc --noEmit` across app, workers and scripts                                     |
 | `npm run check:terms`                        | Forbidden-terms lint (keeps pre-Stellar chain names and bespoke-402 residue out)   |
+| `npm run check:locales`                      | Locale completeness check — diffs every registered locale against `messages/en.json`; exits 1 on missing or funded-feature violations |
+| `npm run check:locales:strict`               | Same as above but also fails on extra (stale) keys not present in the English baseline |
 | `npm run test:contracts`                     | `cargo test --release` over `contracts-soroban`                                     |
 | `npm run check:toolchains`                   | Pinned release toolchain, contract MSRV and CI toolchain matrix agree (no Rust needed) |
 | `npm run check:schema-snapshot`              | Fail-closed Postgres schema / migration drift check; `-- --write` regenerates the snapshot (no secrets) |
@@ -1168,6 +1170,8 @@ Every env var lives in `.env.example`. Quick reference:
 | `npm run seed` / `npm run seed:dry`          | Seed demo claims (live / dry-run)                                                  |
 | `npx tsx scripts/demo-full-cycle.ts`         | Full create -> challenge -> settle demo in ~90s                                    |
 | `npx tsx scripts/check-claim.ts <id>`        | Print a claim's state and deadline                                                 |
+| `npm run rollback:rehearsal`                 | Dry-run the full deployment rollback against a deterministic fixture (no secrets needed, runs in CI) |
+| `npm run rollback:rehearsal:live`            | Same rehearsal against your local `.env.local` (does not touch the chain)          |
 
 ---
 
